@@ -230,7 +230,7 @@ static int addGen5Options(PSDP_OPTION* head) {
             err |= addAttributeString(head, "x-nv-vqos[0].fec.repairPercent", "20");
         }
     }
-    
+
     if (APP_VERSION_AT_LEAST(7, 1, 446) && (StreamConfig.width < 720 || StreamConfig.height < 540)) {
         // We enable DRC with a static DRC table for very low resoutions on GFE 3.26 to work around
         // a bug that causes nvstreamer.exe to crash due to failing to populate a list of valid resolutions.
@@ -389,10 +389,10 @@ static PSDP_OPTION getAttributesList(char*urlSafeAddr) {
         err |= addAttributeString(&optionHead, "x-nv-vqos[0].bw.minimumBitrate", payloadStr);
         err |= addAttributeString(&optionHead, "x-nv-vqos[0].bw.maximumBitrate", payloadStr);
     }
-    
+
     // FEC must be enabled for proper packet sequencing to be done by RTP FEC queue
     err |= addAttributeString(&optionHead, "x-nv-vqos[0].fec.enable", "1");
-    
+
     err |= addAttributeString(&optionHead, "x-nv-vqos[0].videoQualityScoreUpdateTime", "5000");
 
     // If the remote host is local (RFC 1918), enable QoS tagging for our traffic. Windows qWave
@@ -438,7 +438,11 @@ static PSDP_OPTION getAttributesList(char*urlSafeAddr) {
         snprintf(payloadStr, sizeof(payloadStr), "%d", slicesPerFrame);
         err |= addAttributeString(&optionHead, "x-nv-video[0].videoEncoderSlicesPerFrame", payloadStr);
 
-        if (NegotiatedVideoFormat & VIDEO_FORMAT_MASK_AV1) {
+        if (NegotiatedVideoFormat & VIDEO_FORMAT_MASK_PYROWAVE) {
+            err |= addAttributeString(&optionHead, "x-nv-clientSupportHevc", "0");
+            err |= addAttributeString(&optionHead, "x-nv-vqos[0].bitStreamFormat", "3");
+        }
+        else if (NegotiatedVideoFormat & VIDEO_FORMAT_MASK_AV1) {
             err |= addAttributeString(&optionHead, "x-nv-vqos[0].bitStreamFormat", "2");
         }
         else if (NegotiatedVideoFormat & VIDEO_FORMAT_MASK_H265) {
