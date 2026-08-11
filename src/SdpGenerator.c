@@ -530,6 +530,11 @@ static PSDP_OPTION getAttributesList(char*urlSafeAddr) {
             }
         }
 
+        if (VideoCallbacks.capabilities & CAPABILITY_INTRA_REFRESH) {
+            // Xbox console UWP audio is stuck with 10ms frame size
+            AudioPacketDuration = 10;
+        }
+
         snprintf(payloadStr, sizeof(payloadStr), "%d", AudioPacketDuration);
         err |= addAttributeString(&optionHead, "x-nv-aqos.packetDuration", payloadStr);
     }
